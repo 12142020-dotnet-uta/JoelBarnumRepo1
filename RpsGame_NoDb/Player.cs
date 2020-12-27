@@ -1,8 +1,8 @@
 using System;
-
+using System.ComponentModel.DataAnnotations;
 namespace RpsGame_NoDb
 {
-    class Player
+    public class Player
     {
         public Player(string fname = "null", string lname = "null")
         {
@@ -10,17 +10,24 @@ namespace RpsGame_NoDb
             this.Lname = lname;
         }
 
-        private Guid playerId = Guid.NewGuid();
-        public Guid PlayerId
+        private Guid playerID = Guid.NewGuid();
+        [Key]
+        public Guid PlayerId { get{ return playerID; } set{ playerID = value;} }
+        /*[Key]
+        public Guid PlayerId = Guid.NewGuid();
+        */
+        /*public Guid PlayerId
         {
             get
             {
                 return playerId;
             }
         }
+        */
 
-        private int numWins;
-        private int numLosses;
+        public int numWins {get ;set;}
+
+        public int numLosses{get ;set;}
         private string fName;
         public string Fname
         {
@@ -70,7 +77,7 @@ namespace RpsGame_NoDb
         /// <param name="x"></param>
         public void AddWin(int x)
         {
-            numWins = +x;
+            numWins += x;
         }
 
         public void AddLoss()
@@ -88,7 +95,7 @@ namespace RpsGame_NoDb
             return winsAndLosses; // return the array.
         }
 
-        
+
 
 
 

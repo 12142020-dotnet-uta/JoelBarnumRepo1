@@ -14,7 +14,9 @@ namespace JoelBarnumRepo1
             Console.WriteLine($"your response is {response}.");
             stringArray.SetValue(response,i);
             }
-            Console.WriteLine(stringArray.ToString());
+            for (int j = 0; j < stringArray.Length; j++){
+            Console.WriteLine(stringArray.GetValue(j));
+            }
         }
     }
 }

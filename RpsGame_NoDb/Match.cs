@@ -1,24 +1,30 @@
-
 using System.Collections.Generic;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace RpsGame_NoDb
 {
-    class Match
+    public class Match
     {
-        private Guid matchId = Guid.NewGuid();
-        public Guid MatchId { get { return matchId; } }
+        private Guid matchID = Guid.NewGuid();
+        [Key]
+        public Guid MatchId { get{ return matchID; } set{ matchID = value;} }
+        /*[Key]
+        public Guid MatchId = Guid.NewGuid();
+        */
+        //private Guid matchId = Guid.NewGuid();
+        //public Guid MatchId { get { return matchId; } }
 
         public Player Player1 { get; set; } // always the computer
         public Player Player2 { get; set; } // always the user.
 
         public List<Round> Rounds = new List<Round>();
 
-        private int p1RoundWins { get; set; } // ho many rounds has the player won?
-        private int p2RoundWins { get; set; }
-        private int ties { get; set; }
+        public int p1RoundWins { get; set; } // ho many rounds has the player won?
+        public int p2RoundWins { get; set; }
+        public int ties { get; set; }
 
-        //below are methods
+
         /// <summary>
         /// This is the description of the method called RoundWinner
         /// This methodtakes an optional Player object and increments the numnber of round wins for that player.
@@ -29,20 +35,15 @@ namespace RpsGame_NoDb
         {
             if (p == null)
             {
-                return;
+                ties++;
             }
-            if (p.PlayerId == Player1.PlayerId)
+            else if (p.PlayerId == Player1.PlayerId)
             {
                 p1RoundWins++;
             }
             else if (p.PlayerId == Player2.PlayerId)
             {
                 p2RoundWins++;
-
-            }
-            else
-            {
-                ties++;
             }
         }
 
@@ -58,7 +59,8 @@ namespace RpsGame_NoDb
             }
             else
             {
-                return null;
+                return new Player();
+                
             }
         }
 
