@@ -19,13 +19,18 @@ namespace P0_JoelBarnum
                 //Console.WriteLine($"the boolean returned from the welcomeMenu method is {quit}");
                 if(quit == false){
                 Repository rs = new Repository();
-                Customer c1 = rs.LoginOrCreateCustomer();// a new customer ws created or existing customer was logged in
+                int loginChoice = fs.GetLoginChoice();
+                Customer c1 = rs.LoginOrCreateCustomer(loginChoice);// a new customer ws created or existing customer was logged in
+                rs.SuggestAProductBaseOnHistory(c1.CustomerId);
                 fs.AddCustToRsLoggedInCust(c1);
+
                 //Console.WriteLine($"the customer logged in or created is {c1.firstName} {c1.lastName}");
                 int locationChoiceInt = fs.StoreLocationChoiceMenu();
                 fs.StoreMenu(locationChoiceInt);
+                
                 //Console.WriteLine("program ended up here from the return statement in dana");
                 }
+                
             }while(quit == false);
                 
             

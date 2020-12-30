@@ -6,9 +6,11 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
+
+
 namespace P0_JoelBarnum
 {
-    public class Repository
+    public class Repository : IStatistic
     {
         static GwDbContext DbContext = new GwDbContext();
         DbSet<Customer> customers = DbContext.customers;
@@ -24,37 +26,62 @@ namespace P0_JoelBarnum
         //static List<StoreLocation> storeLocations = new List<StoreLocation>();
         //static List<Inventory> allInventory = new List<Inventory>();
 
-    
+        static Functions fs = new Functions();
 
+
+    public Repository()
+    {
+
+    }
+    public Repository(GwDbContext context)
+    {
+       Repository.DbContext = context;
+    }
+    
+    int loginC=0;
+    string fName;
+    string lName;
 /// <summary>
 /// validaies uniqeness and create customer and adds the customer to the customer List
 /// </summary>
-    public Customer LoginOrCreateCustomer()
-    {
-        int choice;
+    public Customer LoginOrCreateCustomer(int loginChoice)
+    {   loginC = loginChoice;
         bool customerCreationBool = false;
-        do
-        {
-            Console.WriteLine("To log in, enter your name. If your new here, we will create a new account for you.");
+        Customer c1 = new Customer();
+        if(loginChoice == 2)
+    {
+        // do
+        // {
+            Console.WriteLine("Enter your information and we will create a new account for you.");
             Console.Write("Pleas enter your first name: ");
-            string fName = Console.ReadLine();
+             fName = Console.ReadLine();
             Console.Write("Pleas enter your last name: ");
-            string lName = Console.ReadLine();
+             lName = Console.ReadLine();
             Console.WriteLine($"\nHello {fName} {lName}! Enjoy your shopping experience!\n");
-            Customer c1 = new Customer();
-            c1 = customers.Where(x => x.firstName == fName && x.lastName == lName).FirstOrDefault();
-        if (c1 == null)
+            
+           Customer c = customers.Where(x => x.firstName == fName && x.lastName == lName).FirstOrDefault();
+        if (c == null)
         {
             c1 = new Customer(fName,lName);
             customers.Add(c1);
             DbContext.SaveChanges();
             return c1;
+        }else if(c != null){
+            customerCreationBool = true;
+            return c;
         }
-        return c1;
-        customerCreationBool = true;
-        } while (customerCreationBool == false);
         
+        //customerCreationBool = true;
+        //
+    }else if(loginChoice == 1)
+    {
+            Customer validatedCustomer = ValidateUserExists();
+            
+            return validatedCustomer;
     }
+        return null;
+    }
+
     //todo if bool is true logic
 /// <summary>
 /// Returns a list of all products
@@ -142,7 +169,7 @@ namespace P0_JoelBarnum
             return null;
         }
         /// <summary>
-        /// returns the storeLocation of the storeId that is passed into the method
+        /// returns the storeLocation object of the storeId that is passed into the method
         /// </summary>
         /// <param name="storeId"></param>
         /// <returns></returns>
@@ -277,6 +304,7 @@ namespace P0_JoelBarnum
             //     Console.WriteLine(item.storeId);
             // }
     }
+    
         /// <summary>
         /// returns an int of the quantity in the Iventory of the storeId and the product passed into the method
         /// </summary>
@@ -435,5 +463,208 @@ namespace P0_JoelBarnum
         {
             purchasedProducts.Add(pp);
         }
-  }
+
+        public List<PurchasedProducts> GetAllPurchasedProducts()
+        {
+            List<PurchasedProducts> pp = new List<PurchasedProducts>();
+            foreach (var item in purchasedProducts)
+            {
+                pp.Add(item);
+            }
+            return pp;
+        }
+
+        /// <summary>
+        /// this calculates the percentage each product is purchased per order and prints the result
+        /// </summary>
+         public void PercentageOfProductsPurchasedPerOrder()
+         {
+             //Product p = new Product();
+             //string Guitar = "Guitar";
+             int guitarCount = 0;
+             //string Case = "Case";
+             int caseCount = 0;
+             //string Amplifier = "Amplifier";
+             int amplifierCount = 0;
+             //string Strings = "Striings";
+             int stringsCount = 0;
+             List<PurchasedProducts> PP = GetAllPurchasedProducts();
+            foreach (var item in PP)
+            {
+                Guid prId = item.productId;
+                foreach (var item2 in products)
+                {
+                    if (prId == item2.ProductId)
+                    {
+                        if (item2.productName == "Guitar")
+                        {
+                           guitarCount += 1;
+                        }else if(item2.productName == "Case")
+                        {
+                            caseCount += 1;
+                        }else if(item2.productName == "Amplifier")
+                        {
+                            amplifierCount += 1;
+                        }else if(item2.productName == "Strings")
+                        {
+                            stringsCount += 1;
+                        }
+                    }
+                }
+            }
+                    int total = guitarCount + caseCount + amplifierCount + stringsCount;
+                    int GuitarP = (guitarCount * 100) / total;
+                    int CaseP = (caseCount * 100) / total;
+                    int AmplifierP = (amplifierCount * 100) / total;
+                    int StringsP = (stringsCount * 100) / total;
+                    Console.WriteLine($"Guitar sales are {GuitarP}% of the total items sold");
+                    Console.WriteLine($"Guitar Case sales are {CaseP}% of the total items sold");
+                    Console.WriteLine($"Amplifier sales are {AmplifierP}% of the total items sold");
+                    Console.WriteLine($"Guitar String sales are {StringsP}% of the total items sold");
+         }
+         /// <summary>
+         /// this suggests the customer buy strings if he has bought a guitar in his or her history
+         /// </summary>
+         public void SuggestAProductBaseOnHistory(Guid custId)
+         {
+             Product guitar = new Product();
+             foreach (var item in products)
+             {
+                 if (item.productName == "Guitar")
+                 {
+                     guitar = item;
+                 }
+             }
+             List<Order> custOrderList = new List<Order>(); 
+             foreach (var item in orderHistory)
+             {
+                 if (item.CustomerId == custId)
+                 {
+                     custOrderList.Add(item);
+                 }
+             }
+             List<Inventory> GuitarInventory = new List<Inventory>();
+             foreach (var item in allInventory)
+             {
+                 if (item.productId == guitar.ProductId)
+                 {
+                     GuitarInventory.Add(item);
+                 }
+             }
+             bool hasBoughGuitar = false;
+             foreach (var item in custOrderList)
+             {
+                 Order order = item;
+                 foreach (var item2 in GuitarInventory)
+                 {
+                     if (order.OrderId == item2.productId)
+                     {
+                         hasBoughGuitar = true;
+                     }
+                 }
+             }
+             if (hasBoughGuitar == true)
+             {
+                 Console.WriteLine("Suggested pruchase: Strings for the guitar you previously bought");
+             }    
+             
+         }
+         
+         public Customer ValidateUserExists()
+         {
+                Customer c3 = new Customer();
+                bool foundCust = false;
+        do{
+            Console.WriteLine("Please enter correct login information");
+            Console.Write("Pleas enter your first name: ");
+            string fName = Console.ReadLine();
+            Console.Write("Pleas enter your last name: ");
+            string lName = Console.ReadLine();
+            bool isAdmin = fs.IsAdmin(fName,lName);
+            if(isAdmin == true)
+            {
+                int choice = 2;
+                do{
+                choice = fs.AdminMenu();
+                if (choice == 1)
+                {
+                    Console.WriteLine("\nEnter the first name of the individual to search for\n");
+                    string f = Console.ReadLine();
+                    Console.WriteLine("\nEnter the last name of the individual to search for\n");
+                    string l = Console.ReadLine();
+                    Customer customer = GetCustByName(f,l);
+                    PrintCustHistoreyByCustomerObj(customer);
+                    foreach (var item in customers)
+                {
+                if (item.firstName == f && item.lastName == l)
+                {
+                    c3 = item;
+                    foundCust = true;
+
+                }
+                }
+                }else if(choice == 2)
+                {
+                    PercentageOfProductsPurchasedPerOrder();
+                
+                }
+                }while (choice != 3);
+                
+                    
+                // }
+                //  
+                // {
+                    
+            }    
+            foreach (var item in customers)
+            {
+                if (item.firstName == fName && item.lastName == lName)
+                {
+                    c3 = item;
+                    foundCust = true;
+                }
+            }
+            
+
+            
+        }  while (foundCust == false);
+            return c3;
+        }
+        static List<Order> OrderHistory = new List<Order>();
+
+        public Customer GetCustByName(string f, string l)
+        {
+            Customer c1 = new Customer();
+            foreach (var item in customers)
+            {
+                if (item.firstName == f && item.lastName == l)
+                {
+                     c1 = item;
+                    //foundCust = true;
+                }
+            }
+            return c1;
+        }
+            
+        
+        public void PrintCustHistoreyByCustomerObj(Customer customer)
+        {
+                    OrderHistory = GetOrderHistory(customer);
+                        //Console.WriteLine($"OrderHistorey list has {OrderHistory.Count} in it");
+                        Console.WriteLine($"Your complete purchase history is:");
+                        if(OrderHistory.Count == 0)
+                        {
+                            Console.WriteLine("you have no purchase history");
+                        }
+                        //List<Order> thisLocationOderAndCustHistory = new List<Order>();
+                            foreach (var item in OrderHistory)
+                            {
+                                Guid stGuidFromOrder = item.GetStoreIdGuid();
+                                StoreLocation loc = GetStoreLocationsStringById(stGuidFromOrder) ;
+                                string locationString = loc.location;
+                                Console.WriteLine($"At the {locationString} location ");
+                                PrintOrder(item.OrderId);
+                            }
+        }
+    }
 }

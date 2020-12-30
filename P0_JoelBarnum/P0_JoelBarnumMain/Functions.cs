@@ -24,6 +24,8 @@ namespace P0_JoelBarnum
         }
         return false;
         }
+
+        int loginChoice = 0;
 /// <summary>
 /// Returns a boolean to either quit or login
 /// </summary>
@@ -31,42 +33,48 @@ namespace P0_JoelBarnum
         public bool WelcomeMenu()
         {
             bool userInputIsIntBoolean;
-            int loginChoice = 0;
+            
             do
             {
             Console.WriteLine("Welcome to Guitar World!");
             
-            Console.WriteLine("Enter: 1 to log in. \nEnter: 2 to exit the program.");
+            Console.WriteLine("Enter: 1 to log in. \nEnter: 2 to if you are a new user. \nEnter: 3 to exit the program.");
             string userInput = Console.ReadLine();
             userInputIsIntBoolean = VerifyInt(userInput);
             if (userInputIsIntBoolean == true)
             {
                 loginChoice = int.Parse(userInput);
                 //Console.WriteLine($"the loginChoice was {loginChoice}");
-                if (loginChoice <1 || loginChoice >2)
+                if (loginChoice <1 || loginChoice >3)
                 {
                     Console.WriteLine("Please enter a valid number.");
-                }else if (loginChoice == 2)
+                }
+                
+                else if (loginChoice == 3)
                 {
                     return true;
-                }else{
+                }else if(loginChoice == 2 || loginChoice == 1)
+                {
                     return false;
-                    }
+                }
             }
             }
-             while ((userInputIsIntBoolean == false) || (loginChoice < 1) || (loginChoice > 2));
-            {
-                if (loginChoice == 1)
-            {
-                //todo call amd make method to enter the login logic
-            }else if(loginChoice == 2){
-                return true;
-            }else{
-                return true;
-            }
-              return true;
-            }
-            
+             while ((userInputIsIntBoolean == false) || (loginChoice < 1) || (loginChoice > 3));
+            // {
+            //     if (loginChoice == 2)
+            // {
+                
+            //     //todo call amd make method to enter the login logic
+            // }else if(loginChoice == 2)
+            // {
+            //     bool userExists = ValidateUserExists();
+            //     return true;
+            // }else{
+            //     return true;
+            // }
+            //   return true;
+            // }
+            return true;
         }
         /// <summary>
         /// this prints out the store location choice menu, takes in the user input,
@@ -81,7 +89,7 @@ namespace P0_JoelBarnum
             Console.WriteLine("Chose location of Guitar world thet you would like to shop at."+
             "\n\t1: Dana point\n\t"+
             "2: Irvine\n\t"+
-            "3: Huntington Beach\n");
+            "3: Huntington Beach\n\t4: log out");
             string userInput = Console.ReadLine();
             userInputIsIntBoolean = VerifyInt(userInput);
             storeChoice = 0;
@@ -240,6 +248,7 @@ namespace P0_JoelBarnum
                                     Console.WriteLine($"the inventory available is = {invQty}");
                                     if (invQty == 0)
                                     {
+                                        Console.WriteLine("Sorry we are all out of that product");
                                         break;
                                     }else if((productChoice == "Guitar" || productChoice == "Case" || productChoice == "Amplifier") && (quantity > 1)) 
                                     {
@@ -369,6 +378,7 @@ namespace P0_JoelBarnum
                             }
                         break;
                     case 4:
+                    
                         return;
                     }
                  
@@ -396,7 +406,36 @@ namespace P0_JoelBarnum
         public void AddCustToRsLoggedInCust(Customer c)
         {
             LoggedInCust = c;
-            Console.WriteLine(LoggedInCust.CustomerId);
+            //Console.WriteLine(LoggedInCust.CustomerId);
+        }
+
+        public int GetLoginChoice()
+        {
+            return loginChoice;
+        }
+        public Boolean IsAdmin(string f, string l)
+        {
+            if ((f == "Admin") && (l == "Admin"))
+            {
+                return true;
+            }else
+            return false;
+        }
+        public int AdminMenu()
+        {
+            bool goodCoice = false;
+            do
+            {Console.WriteLine("Enter: 1 to search for a customer by name\nEnter: 2 to view sales statistics\nEnter: 3 to continue to the store menu");
+            string choice = Console.ReadLine();
+            bool i = VerifyInt(choice);
+            int intchoice = int.Parse(choice);
+            if(i == true && intchoice >= 1 && intchoice <= 3)
+            {
+                goodCoice = true;
+                return intchoice;
+            }
+            }while(goodCoice == false);
+            return -1;
         }
         
     }// class Functions end
