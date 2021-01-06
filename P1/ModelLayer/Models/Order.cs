@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace P0_JoelBarnum
+namespace ModelLayer
 {
     public class Order
     {
@@ -13,9 +14,7 @@ namespace P0_JoelBarnum
         public Guid CustomerId { get; set; }
         public Guid StoreId { get; set; }
         public DateTime dateTime { get; set; } = DateTime.Now;
-        //public List<Product>  purchasedProducts { get; set; }
-        //List<Product> purchasedProducts = new List<Product>();
-        //Repository repository = new Repository();
+
 
         /// <summary>
         /// empty order constructor
@@ -25,7 +24,7 @@ namespace P0_JoelBarnum
 
         }
 
-        
+
         /// <summary>
         /// sets the customer id of the order
         /// </summary>
@@ -57,6 +56,6 @@ namespace P0_JoelBarnum
         {
             return StoreId;
         }
-        
+
     }
 }
