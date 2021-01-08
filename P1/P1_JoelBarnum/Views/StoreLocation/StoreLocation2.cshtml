@@ -1,0 +1,78 @@
+﻿@model ModelLayer.ViewModels.CustomerStorelocationProductsViewModel
+
+@{
+    ViewData["Title"] = "StoreLocation2";
+}
+
+<h1>@Model.storeLocation.location Guitar World </h1>
+
+<div>
+    <h4>StoreLocation2.cshtml</h4>
+    <hr />
+    <dl class="row">
+    </dl>
+</div>
+<div class="col-md-8">
+    <ul class="list-group">
+        
+        @foreach (var item in Model.inventory)
+        {
+            
+            foreach (var x in Model.products)
+            {
+                if (item.productId == x.ProductId)
+                {
+                
+        <li class="list-group-item">Item Name: @x.productName   Qty in stock: @item.quantity         Price: @x.productPrice</li>
+                }
+            }
+    
+        }
+    </ul>
+        
+</div>
+<div class="row">
+    <div class="col-2">
+        <form asp-action="AddToCart">
+            <div class="form-group">
+                <label asp-for="VMproductName" class="control-label"></label>
+                <input asp-for="VMproductName" class="form-control" />
+                <span asp-validation-for="VMproductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="quantityToAddToCart" class="control-label"></label>
+                <input asp-for="quantityToAddToCart" class="form-control" />
+                <span asp-validation-for="quantityToAddToCart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--<div class="row">
+    <div class="col-md-2">
+        <form asp-action="AddToCart">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="itemNumber" class="control-label"></label>
+                <input asp-for="itemNumber" class="form-control" />
+                <span asp-validation-for="itemNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Qty" class="control-label"></label>
+                <input asp-for="Qty" class="form-control" />
+                <span asp-validation-for="Qty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>-->
+
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>
