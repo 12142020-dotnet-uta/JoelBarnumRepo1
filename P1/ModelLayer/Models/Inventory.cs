@@ -61,7 +61,7 @@ namespace ModelLayer
         /// <summary>
         /// increments the qauntity of the inventory by 1
         /// </summary>
-        internal void incrementInventory()
+        public void incrementInventory()
         {
             this.quantity += 1;
         }

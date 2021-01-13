@@ -23,7 +23,11 @@ namespace ModelLayer
         {
 
         }
-
+        public Order(Guid cId, Guid sId)
+        {
+            CustomerId = cId;
+            StoreId = sId;
+        }
 
         /// <summary>
         /// sets the customer id of the order

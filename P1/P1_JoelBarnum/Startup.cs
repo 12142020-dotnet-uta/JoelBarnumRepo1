@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BusinessLogicLayer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using P1_JoelBarnum.Controllers;
 using RepositoryLayer;
 
 namespace P1_JoelBarnum
@@ -27,8 +29,10 @@ namespace P1_JoelBarnum
         {
             services.AddControllersWithViews();
             services.AddScoped<GwDbContext>();
-            //services.AddScoped<Repository>();
-            //services.AddScoped<BusinessLogicClass>();
+            services.AddScoped<Repository>();
+            services.AddScoped<BusinessLogicClass>();
+            //services.AddScoped<CustomerStorelocationProductsViewModel>();
+
 
             //services.AddDbContext<GwDbContext>(options =>
             //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

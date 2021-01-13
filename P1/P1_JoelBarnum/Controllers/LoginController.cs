@@ -6,26 +6,73 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer;
 using ModelLayer.ViewModels;
+using BusinessLogicLayer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace P1_JoelBarnum.Controllers
 {
     public class LoginController : Controller
     {
+
+
+        BusinessLogicClass blc = new BusinessLogicClass();
         // GET: Login
         //[ActionName("Login")]
         public ActionResult Login()
         {
             return View();
         }
-        //public ActionResult validateLogin(LoginCustoerViewModel loginCustoerViewModel)
-        //{
-           // Models.Customer customer = new Models.Customer();
-           //call a method in the business layer to save and return a customer
-           //use DI (dependancy injection) to get an instance of the business class and access methods
-          //  return View();
-        //}
+        public ActionResult ValidateCustomerInfo(string firstName, string lastName)
+        {
+            //System.Diagnostics.Debug.WriteLine($" this is the out put from the form {firstName} {lastName}");
+            
+               Customer LoggedInCust = blc.ValidateCust(firstName,lastName);
+            if(LoggedInCust == null)
+            {
+                ModelState.AddModelError("Please enter the correct login information", "Please enter the correct login information");
+                return RedirectToAction("Login");
+            }
+            if(LoggedInCust.firstName == "Admin" && LoggedInCust.lastName == "Admin")
+            {
+                return RedirectToAction("AdminView");
+            }
+            if(LoggedInCust.defaultStore != null)
+            {
+                return RedirectToAction("Choice", "StoreLocation",  new { LocationAbreviation = LoggedInCust.defaultStore });
+            }
+            return View("CreateNew", LoggedInCust);
+        }
 
+        public ActionResult AdminView()
+        {
 
+            return View();
+        }
+        [HttpPost]
+        public ActionResult SearchByCustName(string searchString1, string searchString2)
+        {
+            List<Order> orderHist = blc.SearchOrderHistoryByName(searchString1, searchString2);
+            OrderViewModelList orderViewModels = blc.GetOrderViewModels(orderHist);
+            return View("CustOrderHistoryView", orderViewModels);
+        }
+
+        public ActionResult ListAllCustomers()
+        {
+            AllCustomerNamesViewModel nameList = blc.GetCustomerNameList();
+            return View("ListAllCustomers" , nameList);
+        }
+
+        public ActionResult ListStoreOrderHistory(string SearchString)
+        {
+            OrderViewModelList orderViewModelList = blc.GetOrdersByStoreLocationName(SearchString);
+            return View("CustOrderHistoryView", orderViewModelList);
+        }
+
+        public ActionResult GetStatistics()
+        {
+            StatisticsViewModel newModel = blc.GetStatisticsViewModel();
+            return View("GetStatistics", newModel);
+        }
         // GET: Login/Details/5
         public ActionResult Details(int id)
         {
@@ -35,8 +82,16 @@ namespace P1_JoelBarnum.Controllers
         // GET: Login/Create
         public ActionResult Create()
         {
+            //Customer neCustomer = blc.CreatNewReturnIfExistsBC(firstName, lastName);
             return View();
         }
+        public ActionResult CreateNew(string firstName, string lastName)
+        {
+            Customer neCustomer = blc.CreatNewReturnIfExistsBC(firstName, lastName);
+            return View(neCustomer);
+        }
+
+
 
         // POST: Login/Create
         [HttpPost]
