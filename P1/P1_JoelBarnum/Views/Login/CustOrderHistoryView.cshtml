@@ -7,13 +7,13 @@
 <h1>CustOrderHistoryView</h1>
 
 <div>
-    <h4>OrderViewModelList</h4>
+    <h4>Here Is Your Order</h4>
     <hr />
     <dl class="row">
     </dl>
 </div>
 
-<a asp-action="StoreLocation2">Back</a>
+<a asp-action="AdminView">Back</a>
 @foreach (var item in Model.orderViewModelsList)
 {<div class="col-md-8">
 
@@ -91,6 +91,6 @@
     </dl>*@
     <div>
         @*@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |*@
-        <a asp-controller="StoreLocation" asp-action="LogOut">Log Out</a>
-        <a asp-action="StoreLocation2">Back</a>
+        <a asp-action="AdminView">Back</a>
+        
     </div>

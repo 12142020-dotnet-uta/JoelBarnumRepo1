@@ -70,7 +70,11 @@ namespace BusinessLogicLayer
                 }
 
             }
-            c.SetCustomerId(loggedInCustBLC.CustomerId);
+            try
+            {
+                c.SetCustomerId(loggedInCustBLC.CustomerId);
+            }
+            catch(Exception e) {  }
             c.SetStoreId(currentStore.StoreId);
             return c;
         }
@@ -107,16 +111,16 @@ namespace BusinessLogicLayer
         {
             
             List<OrderViewModel> listToDefineOrderViewModelList = new List<OrderViewModel>();
-
-            foreach( var item in orderHist)
+            List<PurchasedProducts> purchasedProducts1 = rs.GetAllPurchasedProducts();
+            foreach ( var item in orderHist)
             {
                 Customer cust = rs.GetCustById(item.CustomerId);
-
+                
                 OrderViewModel model = new OrderViewModel();
                 model.cusomerName = cust.firstName + " " + cust.lastName;
                 //string Fname = GetCustById(item.CustomerId).firstName;
                 //string Lname = GetCustById(item.CustomerId).lastName;
-                foreach(var x in purchasedProducts1)
+                foreach(var x in purchasedProducts1) //need to regather the purchased products
                 {
                     if(x.OrderId == item.OrderId)
                     {
@@ -173,7 +177,7 @@ namespace BusinessLogicLayer
         public List<Order> SearchOrderHistoryByName(string searchString1, string searchString2)
         {
             Customer cust = rs.GetCustByName(searchString1,searchString2);
-            rs.GetOrderHistory(cust);
+            //rs.GetOrderHistory(cust);
             List<Order> custHist = rs.GetOrderHistory(cust);
                 return custHist;
         }
@@ -200,6 +204,7 @@ namespace BusinessLogicLayer
         public Customer CreatNewReturnIfExistsBC(string firstName, string lastName)
         {
             Customer c1 = rs.CreateNewOrLoginIfExistsRS(firstName, lastName);
+            loggedInCustBLC = c1;
             return c1;
         }
 
@@ -265,10 +270,12 @@ namespace BusinessLogicLayer
 
             Order newOrder = new Order(loggedInCustBLC.CustomerId, currentStore.StoreId);
             rs.AddOrderToHistory(newOrder);
+            rs.Save();
             foreach(var item in currentCartProducts)
             {
                 PurchasedProducts purchasedProducts = new PurchasedProducts(newOrder.OrderId, item.ProductId);
                 rs.AddPurchasedProduct(purchasedProducts);
+                rs.Save();
             }
             currentCartProducts = new List<Product>();
         }
