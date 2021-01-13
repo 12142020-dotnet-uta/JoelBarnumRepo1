@@ -38,9 +38,9 @@
 <div>
     <h2>Chose a location to shop at  TODO view customer purchase history option</h2>
     <div>
-        <span><a  asp-controller="StoreLocation" asp-action="Choice" asp-route-LocationAbreviation="Dana Point">Dana Point</a></span>
-        <span><a  asp-controller="StoreLocation" asp-action="Choice" asp-route-LocationAbreviation="Huntington Beach">Huntington Beach</a></span>
-        <span><a  asp-controller="StoreLocation" asp-action="Choice" asp-route-LocationAbreviation="Irvine">Irvine</a></span>
+        <span><a asp-controller="StoreLocation" asp-action="Choice" asp-route-LocationAbreviation="Dana Point">Dana Point</a></span>
+        <span><a asp-controller="StoreLocation" asp-action="Choice" asp-route-LocationAbreviation="Huntington Beach">Huntington Beach</a></span>
+        <span><a asp-controller="StoreLocation" asp-action="Choice" asp-route-LocationAbreviation="Irvine">Irvine</a></span>
         <!--<span><a href="StoreLocation/Chioce/HB">Hintington Beach</a></span>
         <span><a href="StoreLocation/Chioce/DP">Dana Point      </a></span>
         <span><a href="StoreLocation/Chioce/IV">Irvine      </a></span>-->
@@ -52,3 +52,6 @@
         <span><a class="nav-link" asp-controller="StoreLocationController" asp-action="Choice">Irvine</a></span>
     </div>-->
 </div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

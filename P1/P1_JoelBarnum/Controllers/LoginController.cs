@@ -32,11 +32,47 @@ namespace P1_JoelBarnum.Controllers
                 ModelState.AddModelError("Please enter the correct login information", "Please enter the correct login information");
                 return RedirectToAction("Login");
             }
+            if(LoggedInCust.firstName == "Admin" && LoggedInCust.lastName == "Admin")
+            {
+                return RedirectToAction("AdminView");
+            }
+            if(LoggedInCust.defaultStore != null)
+            {
+                return RedirectToAction("Choice", "StoreLocation",  new { LocationAbreviation = LoggedInCust.defaultStore });
+            }
             return View("CreateNew", LoggedInCust);
         }
 
+        public ActionResult AdminView()
+        {
 
+            return View();
+        }
+        [HttpPost]
+        public ActionResult SearchByCustName(string searchString1, string searchString2)
+        {
+            List<Order> orderHist = blc.SearchOrderHistoryByName(searchString1, searchString2);
+            OrderViewModelList orderViewModels = blc.GetOrderViewModels(orderHist);
+            return View("CustOrderHistoryView", orderViewModels);
+        }
 
+        public ActionResult ListAllCustomers()
+        {
+            AllCustomerNamesViewModel nameList = blc.GetCustomerNameList();
+            return View("ListAllCustomers" , nameList);
+        }
+
+        public ActionResult ListStoreOrderHistory(string SearchString)
+        {
+            OrderViewModelList orderViewModelList = blc.GetOrdersByStoreLocationName(SearchString);
+            return View("CustOrderHistoryView", orderViewModelList);
+        }
+
+        public ActionResult GetStatistics()
+        {
+            StatisticsViewModel newModel = blc.GetStatisticsViewModel();
+            return View("GetStatistics", newModel);
+        }
         // GET: Login/Details/5
         public ActionResult Details(int id)
         {

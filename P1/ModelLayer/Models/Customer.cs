@@ -27,6 +27,8 @@ namespace ModelLayer
             [Display(Name = "Last Name")]
             public string lastName { get; set; }
 
+        public string defaultStore { get; set; } = null;
+
             /// <summary>
             /// customer constructor with first and last name prams to be passed in
             /// </summary>
@@ -36,6 +38,7 @@ namespace ModelLayer
             {
                 this.firstName = fName;
                 this.lastName = lName;
+                //this.defaultStore = null;
             }
             /// <summary>
             /// empty customer constructor

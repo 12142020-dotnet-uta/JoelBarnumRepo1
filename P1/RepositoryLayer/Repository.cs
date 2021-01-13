@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ModelLayer;
+using ModelLayer.ViewModels;
 
 namespace RepositoryLayer
 {
-    public class Repository //: IStatistic
+    public class Repository : IStatistic
     {
         static GwDbContext DbContext = new GwDbContext();
         DbSet<Customer> customers = DbContext.customers;
@@ -18,6 +19,12 @@ namespace RepositoryLayer
         DbSet<StoreLocation> storeLocations = DbContext.storeLocations;
         DbSet<Inventory> allInventory = DbContext.allInventory;
         DbSet<PurchasedProducts> purchasedProducts = DbContext.purchasedProducts;
+        
+
+        public List<Customer> GetAllCustomers()
+        {
+            return customers.ToList();
+        }
 
         //static List<Customer> customers = new List<Customer>();
         //static List<Product> products = new List<Product>();
@@ -35,6 +42,10 @@ namespace RepositoryLayer
         public Repository(GwDbContext context)
         {
             Repository.DbContext = context;
+        }
+        public void Save()
+        {
+            DbContext.SaveChanges();
         }
 
         int loginC = 0;
@@ -85,6 +96,28 @@ namespace RepositoryLayer
             return null;
         }
 
+        public List<Order> getOrdersByStoreId(Guid storeId)
+        {
+                List<Order> p = new List<Order>();
+
+                foreach (var item in orderHistory)
+                {
+                    if (item.StoreId == storeId)
+                    {
+                        p.Add(item);
+                    }
+                }
+
+                //Console.WriteLine($"---there are {p.Count} orders in the history");
+                return p.ToList();
+        }
+
+        public List<Order> getAllOrders()
+        {
+
+            return orderHistory.ToList();
+        }
+
         //todo if bool is true logic
         /// <summary>
         /// Returns a list of all products
@@ -104,6 +137,20 @@ namespace RepositoryLayer
             return p.ToList();
 
         }
+
+        public Customer GetCustById(Guid customerId)
+        {
+            Customer customer = new Customer();
+            foreach(var item in customers)
+            {
+                if (item.CustomerId == customerId)
+                {
+                    customer = item;
+                }
+            }
+            return customer; 
+        }
+
         /// <summary>
         /// return 1 product where the string property productName == the string passed into the method
         /// </summary>
@@ -462,9 +509,23 @@ namespace RepositoryLayer
             }
             return null;
         }
+
+        public List<Order> GetOrderListByCustId(Guid custId)
+        {
+            List<Order> orderList = new List<Order>();
+            foreach (var item in orderHistory)
+            {
+                if (item.OrderId == custId)
+                {
+                   orderList.Add(item);
+                }
+            }
+            return orderList; ;
+        }
         public void AddPurchasedProduct(PurchasedProducts pp)
         {
             purchasedProducts.Add(pp);
+            DbContext.SaveChanges();
         }
 
         public List<PurchasedProducts> GetAllPurchasedProducts()
@@ -480,7 +541,7 @@ namespace RepositoryLayer
         /// <summary>
         /// this calculates the percentage each product is purchased per order and prints the result
         /// </summary>
-        public void PercentageOfProductsPurchasedPerOrder()
+        public StatisticsViewModel PercentageOfProductsPurchasedPerOrder()
         {
             //Product p = new Product();
             //string Guitar = "Guitar";
@@ -523,10 +584,18 @@ namespace RepositoryLayer
             int CaseP = (caseCount * 100) / total;
             int AmplifierP = (amplifierCount * 100) / total;
             int StringsP = (stringsCount * 100) / total;
-            Console.WriteLine($"Guitar sales are {GuitarP}% of the total items sold");
-            Console.WriteLine($"Guitar Case sales are {CaseP}% of the total items sold");
-            Console.WriteLine($"Amplifier sales are {AmplifierP}% of the total items sold");
-            Console.WriteLine($"Guitar String sales are {StringsP}% of the total items sold");
+            StatisticsViewModel model = new StatisticsViewModel();
+            model.GuitarP = GuitarP;
+            model.CaseP = CaseP;
+            model.AmplifierP = AmplifierP;
+            model.StringsP = StringsP;
+            //Console.WriteLine($"Guitar sales are {GuitarP}% of the total items sold");
+            //Console.WriteLine($"Guitar Case sales are {CaseP}% of the total items sold");
+            //Console.WriteLine($"Amplifier sales are {AmplifierP}% of the total items sold");
+            //Console.WriteLine($"Guitar String sales are {StringsP}% of the total items sold");
+
+
+            return model;
         }
         /// <summary>
         /// this suggests the customer buy strings if he has bought a guitar in his or her history
@@ -734,6 +803,12 @@ namespace RepositoryLayer
                 return c;
             }
             return null;
+        }
+        public double GetProductPrice(string name)
+        {
+            Product p = GetProductByName(name);
+            double price = p.productPrice;
+            return price;
         }
     }//end of class
 }//end of namespace
